@@ -17,27 +17,27 @@ Week 8: Basic Flutter.
 1. Flutter adalah UI framework deklaratif berbasis widget: hampir semua yang tampil di layar adalah widget, dan widget-widget itu disusun membentuk struktur pohon yang disebut widget tree. Widget yang membungkus widget lain disebut parent, sedangkan yang berada di dalamnya disebut child. Parent menentukan batasan ukuran (constraints) bagi child-nya, child menentukan ukurannya sendiri di dalam batasan tersebut, lalu parent yang menentukan posisinya. Ketika ada perubahan, Flutter membangun ulang (rebuild) bagian pohon yang terdampak, bukan seluruh aplikasi. Pada proyek ini, pohonnya kira-kira seperti berikut: MyApp → MaterialApp → MyHomePage → Scaffold → (AppBar dan Padding → Column → [Row berisi 3 InfoCard, SizedBox, Center → Column → [Padding → Text, GridView berisi 3 ItemCard]]). Misalnya Column adalah parent dari Row, SizedBox, dan Center, sehingga ketiganya disusun vertikal oleh Column. Begitu pula Card adalah parent dari Container pada InfoCard, dan Material adalah parent dari InkWell pada ItemCard.
 
 2. Widget yang digunakan dan fungsinya.
-MyApp: widget root buatan sendiri (StatelessWidget) yang mengembalikan MaterialApp.
-MaterialApp: widget root dengan style Material Design yang mengatur judul, tema (ThemeData dengan ColorScheme.fromSeed), dan halaman awal (home).
-MyHomePage: widget halaman utama buatan sendiri (StatelessWidget) yang menyusun seluruh tampilan menu.
-Scaffold: menyediakan struktur visual dasar halaman (AppBar, body, dan tempat SnackBar muncul).
-AppBar: menampilkan bar bagian atas halaman aplikasi (judul "MyPortfolio").
-Padding: memberi jarak di sekeliling widget lain, misalnya pada body halaman utama.
-Column: menyusun child secara vertikal.
-Row: baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
-SizedBox: memberi jarak kosong dengan ukuran tertentu antar-widget.
-Center: menempatkan child di tengah ruang yang tersedia (membungkus pesan sambutan dan kisi tombol).
-Text: menampilkan teks (pesan sambutan, judul dan isi kartu, nama tombol, dan isi SnackBar).
-GridView.count: menampilkan kartu tombol dalam tata letak kisi 3 kolom, shrinkWrap membuat ukuran kisi menyesuaikan tinggi konten anaknya.
-InfoCard: widget reusable buatan sendiri untuk menampilkan satu pasang judul (title) dan isi (content), dipakai untuk NPM, Name, dan Class.
-Card: kartu dengan style Material dengan efek bayangan (elevation 2) sebagai wadah InfoCard.
-Container: wadah yang mengatur lebar kartu (lebar layar dibagi 3,5) dan padding.
-ItemCard: widget reusable buatan sendiri untuk satu tombol ikon dan teks pada menu.
-Material: memberi warna latar (dari item.color) dan sudut membulat pada ItemCard, serta dibutuhkan agar efek sentuh tampil.
-InkWell: membuat kartu bisa disentuh dengan ripple effect, onTap dipakai untuk memunculkan SnackBar.
-Icon: menampilkan ikon pada tiap tombol.
-ScaffoldMessenger: pengelola SnackBar, dipakai lewat ScaffoldMessenger.of(context) untuk menampilkan dan menyembunyikan SnackBar.
-SnackBar: notifikasi bar di bawah layar dengan pesan "Kamu telah menekan tombol [Nama Tombol]!".
+- `MyApp`: widget root buatan sendiri (StatelessWidget) yang mengembalikan MaterialApp.
+- `MaterialApp`: widget root dengan style Material Design yang mengatur judul, tema (ThemeData dengan ColorScheme.fromSeed), dan halaman awal (home).
+- `MyHomePage`: widget halaman utama buatan sendiri (StatelessWidget) yang menyusun seluruh tampilan menu.
+- `Scaffold`: menyediakan struktur visual dasar halaman (AppBar, body, dan tempat SnackBar muncul).
+- `AppBar`: menampilkan bar bagian atas halaman aplikasi (judul "MyPortfolio").
+- `Padding`: memberi jarak di sekeliling widget lain, misalnya pada body halaman utama.
+- `Column`: menyusun child secara vertikal.
+- `Row`: baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
+- `SizedBox`: memberi jarak kosong dengan ukuran tertentu antar-widget.
+- `Center`: menempatkan child di tengah ruang yang tersedia (membungkus pesan sambutan dan kisi tombol).
+- `Text`: menampilkan teks (pesan sambutan, judul dan isi kartu, nama tombol, dan isi SnackBar).
+- `GridView.count`: menampilkan kartu tombol dalam tata letak kisi 3 kolom, shrinkWrap membuat ukuran kisi menyesuaikan tinggi konten anaknya.
+- `InfoCard`: widget reusable buatan sendiri untuk menampilkan satu pasang judul (title) dan isi (content), dipakai untuk NPM, Name, dan Class.
+- `Card`: kartu dengan style Material dengan efek bayangan (elevation 2) sebagai wadah InfoCard.
+- `Container`: wadah yang mengatur lebar kartu (lebar layar dibagi 3,5) dan padding.
+- `ItemCard`: widget reusable buatan sendiri untuk satu tombol ikon dan teks pada menu.
+- `Material`: memberi warna latar (dari item.color) dan sudut membulat pada ItemCard, serta dibutuhkan agar efek sentuh tampil.
+- `InkWell`: membuat kartu bisa disentuh dengan ripple effect, onTap dipakai untuk memunculkan SnackBar.
+- `Icon`: menampilkan ikon pada tiap tombol.
+- `ScaffoldMessenger`: pengelola SnackBar, dipakai lewat ScaffoldMessenger.of(context) untuk menampilkan dan menyembunyikan SnackBar.
+- `SnackBar`: notifikasi bar di bawah layar dengan pesan "Kamu telah menekan tombol [Nama Tombol]!".
 
 3. MaterialApp adalah widget yang membungkus aplikasi dengan berbagai konfigurasi dasar Material Design, antara lain tema (ThemeData), halaman awal (home), judul aplikasi, sistem navigasi/routing (Navigator), dan dukungan lokalisasi. Banyak widget Material seperti Scaffold, AppBar, dan SnackBar bergantung pada informasi yang disediakan oleh widget induk di atasnya, misalnya Theme, MediaQuery, Navigator, dan ScaffoldMessenger. Dengan menaruh MaterialApp di posisi paling atas, semua widget di bawahnya otomatis bisa mengakses tema dan layanan tersebut lewat BuildContext. Pada proyek ini, tema yang diatur di MaterialApp (seed color indigo) dipakai misalnya untuk warna AppBar lewat Theme.of(context).colorScheme.primary. Secara teknis MaterialApp tidak wajib (misalnya bisa memakai CupertinoApp untuk gaya iOS), tetapi untuk aplikasi bergaya Material ia adalah pilihan paling praktis sehingga umum dipakai sebagai root.
 
