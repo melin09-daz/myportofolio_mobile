@@ -12,6 +12,8 @@ MyPortfolio Mobile adalah aplikasi mobile berbasis Flutter yang menjadi pendampi
 
 Week 8: Basic Flutter.
 
+Week 9: Flutter Navigation, Layouts, Forms, and Input Elements.
+
 ### Tugas 1 
 
 1. Flutter adalah UI framework deklaratif berbasis widget: hampir semua yang tampil di layar adalah widget, dan widget-widget itu disusun membentuk struktur pohon yang disebut widget tree. Widget yang membungkus widget lain disebut parent, sedangkan yang berada di dalamnya disebut child. Parent menentukan batasan ukuran (constraints) bagi child-nya, child menentukan ukurannya sendiri di dalam batasan tersebut, lalu parent yang menentukan posisinya. Ketika ada perubahan, Flutter membangun ulang (rebuild) bagian pohon yang terdampak, bukan seluruh aplikasi. Pada proyek ini, pohonnya kira-kira seperti berikut: MyApp → MaterialApp → MyHomePage → Scaffold → (AppBar dan Padding → Column → [Row berisi 3 InfoCard, SizedBox, Center → Column → [Padding → Text, GridView berisi 3 ItemCard]]). Misalnya Column adalah parent dari Row, SizedBox, dan Center, sehingga ketiganya disusun vertikal oleh Column. Begitu pula Card adalah parent dari Container pada InfoCard, dan Material adalah parent dari InkWell pada ItemCard.
@@ -49,3 +51,31 @@ Week 8: Basic Flutter.
 
 Selama proses pengerjaan, AI tools yang saya gunakan adalah Claude (Anthropic) karena baru pertama kali mengenal dart dan flutter. Strategi yang saya lakukan selama proses pengerjaan tugas adalah meng upload pdf penugasan dan cek ceklist dari tugas tersebut. Ketika ada yang kurang saya tidak langsung menyuruh AI untuk memberikan code atau jawaban yang tepat, sisanya saya explore sendiri melalui browser. Keterbatasan AI adalah tidak bisa menjalankan Flutter di environment nya sehingga saya melakukan cek secara berkala di vs code saya dan juga saya tidak langsung percaya dengan hasil yang diberikan oleh AI sehingga saya selalu double check.
 
+### Tugas 2
+
+1. Widget `Navigator` menampilkan halaman-halaman ke layar sebagai sebuah tumpukan (stack), dan halaman sering disebut route.
+   - `Navigator.push()` menambahkan suatu route ke dalam stack route yang dikelola oleh Navigator, sehingga route yang ditambahkan berada pada paling atas stack dan ditampilkan kepada pengguna.
+   - `Navigator.pop()` menghapus route yang sedang ditampilkan (route paling atas stack), sehingga aplikasi berpindah ke route yang berada di bawahnya pada stack.
+   - `Navigator.pushReplacement()` menghapus route yang sedang ditampilkan dan menggantinya dengan route yang diberikan. Route lama pada atas stack digantikan langsung oleh route baru tanpa mengubah kondisi elemen stack di bawahnya.
+
+   Perbedaan `push()` dan `pushReplacement()` ada pada apa yang dilakukan terhadap route di atas stack: `push()` menambahkan route baru di atas route yang sudah ada, sedangkan `pushReplacement()` menggantikan route yang sudah ada tersebut.
+
+   Untuk membuka formulir dari card "Tambah Pengalaman", saya menggunakan `Navigator.push()` ke `MaterialPageRoute` yang berisi `ExperienceFormPage`. Dengan `push()`, halaman utama tetap berada di bawah formulir pada stack, sehingga pengguna dapat menekan tombol Back sistem pada perangkat atau tombol Back pada browser untuk kembali ke halaman utama.
+
+   Opsi Home di drawer menggunakan `Navigator.pushReplacement()` ke `MyHomePage`. Halaman yang sedang tampil (misalnya formulir) diganti dengan halaman utama, sehingga pengguna kembali ke halaman utama tanpa menumpuk halaman baru di atas formulir.
+
+2. `Scaffold` menyediakan struktur visual dasar halaman. Di proyek ini, setiap halaman memakai susunan yang sama: `appBar` untuk bar bagian atas, `drawer` untuk menu navigasi, dan `body` untuk isi halaman. Drawer menu adalah menu yang muncul dari sisi kiri layar dan berisi navigasi ke halaman-halaman lain pada aplikasi. Karena `LeftDrawer` dibuat sebagai widget tersendiri di `lib/widgets/left_drawer.dart`, komponen yang sama dipasang lewat properti `drawer: const LeftDrawer()` pada `MyHomePage`, `ProjectFormPage`, dan `ExperienceFormPage`. Dengan begitu pengguna tetap dapat mengakses navigasi aplikasi dari halaman mana pun, dan struktur halaman tetap konsisten.
+
+   Contoh penggunaan warna tema di lebih dari satu halaman: `seedColor: Colors.indigo` diatur di `ThemeData` pada `main.dart`, lalu `AppBar` di `MyHomePage` dan `ExperienceFormPage` sama-sama memakai `Theme.of(context).colorScheme.primary` sebagai `backgroundColor`. Tombol Simpan di formulir juga memakai warna yang sama. Jika seed color diganti di satu tempat, semua halaman ikut berubah.
+
+3. Formulir memakai `Form` sebagai wadah bagi beberapa input field, dengan `SingleChildScrollView` di dalamnya dan `Column` sebagai child untuk menyusun field secara vertikal dari atas ke bawah. Tata letak ini dipilih karena `Column` dan `Row` secara default tidak dapat di-scroll. Jika elemen yang ditampilkan melebihi ruang layar, misalnya pada layar ponsel yang sempit atau ketika papan ketik tampil, `SingleChildScrollView` membuat konten dapat digulir sehingga semua input dan tombol Simpan tetap dapat dijangkau.
+
+   Untuk pengaturan jarak, `Padding` memberikan jarak di sekitar suatu widget (`EdgeInsets.all(16.0)` di sekeliling formulir), sedangkan `SizedBox` memberikan jarak antar elemen (misalnya `SizedBox(height: 16)` di antara field). Tanpa jarak, field akan terlalu rapat dan sulit disentuh di layar kecil. Pada `Column`, `crossAxisAlignment: CrossAxisAlignment.stretch` membuat field dan tombol memenuhi lebar layar.
+
+4. `GlobalKey<FormState>` (`_formKey`) dipasang pada atribut `key` milik `Form`, dan berfungsi untuk mengakses form state, melakukan validasi, dan mengelola kondisi form dari luar `Form`, misalnya dari tombol Simpan. `validator` pada setiap `TextFormField` digunakan untuk memvalidasi isi field dan mengembalikan pesan error apabila input tidak memenuhi ketentuan (atau `null` jika valid). Ketika tombol Simpan ditekan, `_formKey.currentState!.validate()` menjalankan validasi terhadap seluruh field yang memiliki validator dan menampilkan pesan kesalahan pada kolom yang bermasalah. Hanya jika seluruh input valid, `showDialog()` dipanggil untuk menampilkan `AlertDialog` berisi ringkasan isian.
+
+   Contoh nilai yang ditolak: pada field Posisi/Peran, isian berupa spasi saja (`"   "`) ditolak karena validator memeriksa `value.trim().isEmpty`, sehingga muncul pesan "Posisi tidak boleh kosong!". Contoh lain: tanggal selesai yang dipilih sebelum tanggal mulai ditolak dengan pesan "Tanggal selesai tidak boleh sebelum tanggal mulai!".
+
+   Memilih jenis input atau papan ketik saja belum cukup karena jenis input hanya mengatur cara pengguna mengisi data, bukan aturan yang harus dipenuhi datanya. Date picker, misalnya, menjamin format tanggal yang benar, tetapi tetap membiarkan pengguna memilih tanggal selesai yang lebih awal dari tanggal mulai. Aturan seperti wajib diisi, tidak hanya spasi, batas panjang, dan urutan tanggal hanya dapat ditegakkan oleh validator.
+
+Selama proses pengerjaan, AI tools yang saya gunakan adalah Claude (Anthropic). Strategi yang saya lakukan selama proses pengerjaan tugas adalah meng upload pdf penugasan dan cek ceklist dari tugas tersebut. Karena penugasan yang dilakukan sama persis dengan yang sudah dijelaskan di ttutorial, saya menanya AI hanya untuk validasi saja.
