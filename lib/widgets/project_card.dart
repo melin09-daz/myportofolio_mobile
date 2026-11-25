@@ -1,6 +1,10 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
-import 'package:myportofolio_mobile/screens/experience_form.dart'; // BARU
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 // Model data untuk satu kartu di halaman utama.
 class ItemHomepage {
@@ -23,26 +27,52 @@ class ItemCard extends StatelessWidget {
       color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        onTap: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}!"),
+        onTap: () async {
+          final navigator = Navigator.of(context);
+          final messenger = ScaffoldMessenger.of(context);
+
+          if (item.name == "Lihat Proyek") {
+            navigator.push(
+              MaterialPageRoute(
+                builder: (context) => const ProjectListScreen(),
               ),
             );
-          if (item.name == "Tambah Proyek") {
-            Navigator.push(
-              context,
+          } else if (item.name == "Tambah Proyek") {
+            // Dijaga: harus login dulu sebelum membuka form
+            if (!await ensureLoggedIn(context)) return;
+            navigator.push(
               MaterialPageRoute(builder: (context) => const ProjectFormPage()),
             );
           } else if (item.name == "Tambah Pengalaman") {
-            Navigator.push(
-              context,
+            navigator.push(
               MaterialPageRoute(
                 builder: (context) => const ExperienceFormPage(),
               ),
             );
+          } else if (item.name == "Logout") {
+            if (!context.mounted) return;
+            final auth = context.read<AuthState>();
+            if (!auth.isLoggedIn) {
+              messenger
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Kamu belum login')),
+                );
+              return;
+            }
+            await auth.logout();
+            messenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(const SnackBar(content: Text('Berhasil logout')));
+          } else {
+            // Kartu lain (mis. "Lihat Proyek") tetap menampilkan SnackBar seperti semula.
+            messenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Kamu telah menekan tombol ${item.name}!"),
+                ),
+              );
           }
         },
         child: Container(

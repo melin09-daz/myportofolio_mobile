@@ -18,7 +18,7 @@ class ProjectDetailScreen extends StatelessWidget {
             if (project.projectImageUrl.isNotEmpty) ...[
               Image.network(
                 project.projectImageUrl,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     const Text('Gambar tidak dapat dimuat'),
               ),
               const SizedBox(height: 16),

@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class ExperienceFormPage extends StatefulWidget {
@@ -77,9 +77,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
       _startDate == null ? 'Tanggal mulai harus dipilih!' : null;
 
   String? _validateEndDate(String? _) {
-    if (_isOngoing)
+    if (_isOngoing) {
       return null; // masih berlangsung → tidak perlu tanggal selesai
-    if (_endDate == null) return 'Tanggal selesai harus dipilih!';
+    }
+    if (_endDate == null) {
+      return 'Tanggal selesai harus dipilih!';
+    }
     if (_startDate != null && _endDate!.isBefore(_startDate!)) {
       return 'Tanggal selesai tidak boleh sebelum tanggal mulai!';
     }

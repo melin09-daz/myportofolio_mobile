@@ -19,9 +19,17 @@ class Project {
 
   @JsonKey(includeToJson: false)
   final String? id;
+
+  @JsonKey(defaultValue: '')
   final String title;
+
+  @JsonKey(defaultValue: '')
   final String description;
+
+  @JsonKey(defaultValue: '')
   final String techStack;
+
+  @JsonKey(defaultValue: '')
   final String projectUrl;
 
   @JsonKey(defaultValue: '')
